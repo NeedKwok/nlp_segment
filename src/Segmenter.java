@@ -1,16 +1,16 @@
 import java.util.Vector;
 
-public class Sementer {
+public class Segmenter {
     private Trie trie;
 
-    Sementer(Trie trie){
+    Segmenter(Trie trie){
         this.trie = trie;
     }
 
     private Vector<String> FMM(String str){ //正向最大匹配
         int len = str.length();
-        int begin = 0;
-        int end = begin;
+        //int begin = 0;
+        int end = 0;
 
         Vector<String> ans = new Vector<>();
 
@@ -23,36 +23,51 @@ public class Sementer {
                 break;
             }
             else{
-                ans.add(str.substring(begin,end));
+                ans.add(str.substring(0,end));
                 str = str.substring(end,len);
                 len = str.length();
-                begin = 0;
+                end = 0;
             }
         }
         return ans;
     }
 
     private Vector<String> BMM(String str){ //逆向最大匹配
-        int len = str.length();
+        int end = str.length();
         int begin = 0;
-        int end = len;
+        //int end = len;
 
         Vector<String> ans = new Vector<>();
-        while(begin < end){
+
+        while(true){
             for( ; begin < end ; begin++ ){
-                if(trie.search(str) == end) {
-                    ans.add(0, str.substring(begin, end));
+                String s = str.substring(begin,end);
+                if(trie.search(s) == s.length()) {
+                    ans.add(0, s);
+                    if(begin == 0)
+                        return ans;
                     str = str.substring(0, begin);
+                    begin = 0;
+                    end = str.length();
                     break;
                 }
             }
+            if(begin == end)
+                return null;
         }
-
-
-        return ans;
     }
 
     public Vector<String> segment(String str){  //双向最大匹配
-        return null;
+        Vector<String> ansByFMM = FMM(str);
+        Vector<String> ansByBMM = BMM(str);
+        if(ansByBMM == null)
+            return ansByFMM;
+        else if(ansByFMM == null)
+            return ansByBMM;
+        else if(ansByBMM.size() <= ansByFMM.size())//不同则返回短的那个
+            return ansByBMM;
+        else
+            return ansByFMM;
+
     }
 }
