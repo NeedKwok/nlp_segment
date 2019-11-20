@@ -16,13 +16,14 @@ public class Segmenter {
 
         while(end < len){
             end = trie.search(str);
-            if(end <= 0)
-                return null;
-            else if(end == len){
+            if(end == len){
                 ans.add(str);
                 break;
-            }
-            else{
+            } else {
+                if(end == 0) {
+                    System.out.println("警告：词典中没有词\"" + str.charAt(0) + "\"！");
+                    end ++;
+                }
                 ans.add(str.substring(0,end));
                 str = str.substring(end,len);
                 len = str.length();
@@ -52,19 +53,25 @@ public class Segmenter {
                     break;
                 }
             }
-            if(begin == end)
-                return null;
+            if(begin == end){
+                //有一个警告即可
+                //System.out.println("警告：词典中没有词\"" + str.charAt(end - 1) + "\"！");
+                ans.add(0, str.substring(end - 1));
+                if(end - 1 == 0)
+                    return ans;
+                str = str.substring(0, end - 1);
+                begin = 0;
+                end --;
+            }
         }
     }
 
     public Vector<String> segment(String str){  //双向最大匹配
+
         Vector<String> ansByFMM = FMM(str);
         Vector<String> ansByBMM = BMM(str);
-        if(ansByBMM == null)
-            return ansByFMM;
-        else if(ansByFMM == null)
-            return ansByBMM;
-        else if(ansByBMM.size() <= ansByFMM.size())//不同则返回短的那个
+
+        if(ansByBMM.size() <= ansByFMM.size())//不同则返回短的那个
             return ansByBMM;
         else
             return ansByFMM;

@@ -1,8 +1,6 @@
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Trie {
@@ -21,13 +19,13 @@ public class Trie {
         }
     }
 
-    public Trie(){
+    Trie(){
         root = new TrieNode();
     }
 
-    public Trie(TrieNode node){
-        root = node;
-    }
+//    public Trie(TrieNode node){
+//        root = node;
+//    }
 
     public TrieNode getRoot(){
         return root;
@@ -53,14 +51,14 @@ public class Trie {
     int search(String str){
         TrieNode node = root;
         char[] letters = str.toCharArray();
-        int num = 0;
-        for (;num<letters.length;num++) {
+        int ans = 0;
+        for (int num = 0;num < letters.length;num++) {
             if (!node.sons.containsKey(letters[num]))
-                return num;
+                break;
             node = node.sons.get(letters[num]);
+            if(node.isEnd)
+                ans = num + 1;
         }
-        if(!node.isEnd)
-            return -1;
-        return num;
+        return ans;
     }
 }
